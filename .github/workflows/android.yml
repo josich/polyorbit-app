@@ -35,7 +35,7 @@ jobs:
         run: npx cap sync android
       - name: Portrait and vibration
         run: python3 tools/manifest.py android/app/src/main/AndroidManifest.xml
-      - name: Black system bars
+      - name: Dark system bars
         run: python3 tools/theme.py android/app/src/main/res/values/styles.xml
       - name: Version
         run: |

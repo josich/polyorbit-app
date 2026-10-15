@@ -1,8 +1,8 @@
 # Run in CI after `npx cap add android`: the system bars (status bar on top, navigation bar with back / home / apps at
-# the bottom) in black with light icons, instead of Android's white and Capacitor's blue (Oscar, 2026-10-15).
+# the bottom) in the app's dark ground with light icons, instead of Android's white and Capacitor's blue (Oscar, 2026-10-15).
 import re, sys
 p = sys.argv[1]
-GROUND = '#000000'
+GROUND = '#0D1318'
 s = open(p, encoding='utf8').read()
 if 'xmlns:tools' not in s:
     s = s.replace('<resources>', '<resources xmlns:tools="http://schemas.android.com/tools">', 1)

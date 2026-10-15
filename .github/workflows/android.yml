@@ -26,6 +26,11 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Android project
         run: npx cap add android
+      - name: The app's own native code
+        run: |
+          D=android/app/src/main/java/io/github/josich/polyorbit
+          test -f "$D/MainActivity.java"
+          cp native-src/*.java "$D/"
       - name: App icon
         run: |
           npx --yes @capacitor/assets@3 generate --android --assetPath assets \

@@ -133,4 +133,75 @@
     try{ P.App.addListener("appUrlOpen", function(e){ openLink(e && e.url); }); } catch(e){}
     try{ Promise.resolve(P.App.getLaunchUrl()).then(function(r){ openLink(r && r.url); }).catch(function(){}); } catch(e){}
   }
+
+  /* ---- the system bars follow the skin (the app's own SystemBars plugin, native-src/) ---- */
+  if(P.SystemBars){
+    var barsWas = "";
+    var barsPaint = function(){
+      var root = document.documentElement, g = "";
+      try{ g = getComputedStyle(root).getPropertyValue("--ground").trim(); } catch(e){}
+      if(!/^#[0-9a-f]{6}$/i.test(g)) return;
+      var light = root.getAttribute("data-skin") === "light", key = g + light;
+      if(key === barsWas) return;
+      barsWas = key;
+      Promise.resolve(P.SystemBars.set({color:g, light:light})).catch(function(){ barsWas = ""; });
+    };
+    try{ new MutationObserver(barsPaint).observe(document.documentElement, {attributes:true, attributeFilter:["data-skin"]}); } catch(e){}
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", barsPaint); else barsPaint();
+  }
+
+  /* ---- a newer build on GitHub: a small card offers it (an APK installed by download never updates by itself;
+     the Play Store version will, and then this goes) ---- */
+  if(P.App && P.AppLauncher){
+    var APK = "https://github.com/josich/polyorbit-app/releases/latest/download/polyorbit.apk";
+    var CHECK_KEY = "polyorbit-native:upd-check", SKIP_KEY = "polyorbit-native:upd-skip", EVERY = 6 * 3600e3;
+    var updCard = null, updWait = 0;
+    var busy = function(){
+      var d = document.documentElement.dataset, play = document.getElementById("play");
+      return !!(d.tour || d.game || d.course || d.gscr || d.rdg || d.pscr || d.rscr || d.cwin || d.gwin || d.rwin ||
+        d.stage || d.cal || d.along || d.video || d.wgame || d.chal) || (play && play.dataset.on === "1") ||
+        !!document.querySelector(".modal:not([hidden])");
+    };
+    var showUpd = function(n){
+      clearTimeout(updWait);
+      if(busy()){ updWait = setTimeout(function(){ showUpd(n); }, 20000); return; }
+      if(!updCard){
+        updCard = document.createElement("div");
+        updCard.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:90;" +
+          "max-width:520px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 16px;border-radius:14px;" +
+          "background:var(--panel,#1A222B);color:var(--ink,#E9EEF2);border:1.5px solid var(--c2,#2FC9BC);" +
+          "box-shadow:0 8px 28px rgba(0,0,0,.45);font-weight:600;font-size:14px;line-height:1.3";
+        updCard.innerHTML = '<span style="flex:1;min-width:0">New version ready</span>' +
+          '<button type="button" data-u="go" style="all:unset;cursor:pointer;padding:8px 14px;border-radius:10px;background:var(--c2,#2FC9BC);color:var(--ground,#0D1318);font-weight:700">Download</button>' +
+          '<button type="button" data-u="x" aria-label="Not now" style="all:unset;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;border:1px solid color-mix(in srgb,var(--c3,#F0729D) 45%,var(--line,#35424F));color:var(--c3,#F0729D);font-size:18px">×</button>';
+        updCard.addEventListener("click", function(e){
+          var b = e.target.closest("button"); if(!b) return;
+          updCard.style.display = "none";
+          try{ localStorage.setItem(SKIP_KEY, String(updCard.dataset.n)); } catch(err){}
+          if(b.dataset.u === "go"){
+            P.AppLauncher.openUrl({url:APK}).catch(function(){});
+            toast("Open the downloaded file and tap Update. Your progress stays.");
+          }
+        });
+        document.body.appendChild(updCard);
+      }
+      updCard.dataset.n = n;
+      updCard.style.display = "flex";
+    };
+    var checkUpd = function(force){
+      var last = 0, skip = 0;
+      try{ last = +localStorage.getItem(CHECK_KEY) || 0; skip = +localStorage.getItem(SKIP_KEY) || 0; } catch(e){}
+      if(!force && Date.now() - last < EVERY) return;
+      try{ localStorage.setItem(CHECK_KEY, String(Date.now())); } catch(e){}
+      Promise.all([
+        Promise.resolve(P.App.getInfo()),
+        fetch("https://api.github.com/repos/josich/polyorbit-app/releases/latest", {cache:"no-store"}).then(function(r){ return r.ok ? r.json() : null; })
+      ]).then(function(a){
+        var mine = parseInt(a[0] && a[0].build, 10), m = a[1] && /^build-(\d+)$/.exec(a[1].tag_name || ""), n = m ? +m[1] : 0;
+        if(n && mine && n > mine && n > skip) showUpd(n);
+      }).catch(function(){});
+    };
+    setTimeout(function(){ checkUpd(false); }, 5000);
+    document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "visible") checkUpd(false); });
+  }
 })();

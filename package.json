@@ -1,0 +1,13 @@
+{
+  "name": "polyorbit-app",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Polyorbit as a self-contained Android app (Capacitor). The web files live in www/, copied from the web build by deploy-app.sh.",
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}

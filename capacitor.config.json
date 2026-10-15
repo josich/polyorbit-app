@@ -1,0 +1,11 @@
+{
+  "appId": "io.github.josich.polyorbit",
+  "appName": "Polyorbit",
+  "webDir": "www",
+  "backgroundColor": "#0D1318",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": false,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -29,8 +29,8 @@ jobs:
       - name: App icon
         run: |
           npx --yes @capacitor/assets@3 generate --android --assetPath assets \
-            --iconBackgroundColor '#0D1318' --iconBackgroundColorDark '#0D1318' \
-            --splashBackgroundColor '#0D1318' --splashBackgroundColorDark '#0D1318' || echo "icon step skipped"
+            --iconBackgroundColor '#0C1015' --iconBackgroundColorDark '#0C1015' \
+            --splashBackgroundColor '#0C1015' --splashBackgroundColorDark '#0C1015' || echo "icon step skipped"
       - name: Copy the web files
         run: npx cap sync android
       - name: Portrait and vibration

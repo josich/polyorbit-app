@@ -10,6 +10,11 @@
   var C = window.Capacitor;
   if(!C || !C.Plugins) return;
   var P = C.Plugins;
+  /* v544 (Oscar): the APK's own build number beside the web build under (i) - "Build v544 · app 15" */
+  try{ if(P.App && P.App.getInfo) Promise.resolve(P.App.getInfo()).then(function(i){
+    var n = i && i.build; if(!n) return; window.POLY_APP_BUILD = String(n);
+    var t = document.getElementById("buildTag"); if(t && t.textContent.indexOf(" · app ") < 0) t.textContent += " · app " + n;
+  }).catch(function(){}); } catch(e){}
 
   function toB64(blob){
     return new Promise(function(res, rej){

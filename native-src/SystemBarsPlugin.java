@@ -36,6 +36,7 @@ public class SystemBarsPlugin extends Plugin {
                         f = light ? (f | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) : (f & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
                     }
                     d.setSystemUiVisibility(f);
+                    MainActivity.hideBars(getActivity());   /* v542: the colours are for the moments a swipe shows the bars */
                     call.resolve();
                 } catch (Exception e) {
                     call.reject("bad colour: " + color);

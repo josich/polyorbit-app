@@ -1,18 +1,19 @@
 {
   "name": "polyorbit-app",
   "private": true,
-  "version": "0.1.0",
-  "description": "Polyorbit as a self-contained Android app (Capacitor). The web files live in www/, copied from the web build by deploy-app.sh.",
+  "version": "0.2.0",
+  "description": "Polyorbit as a self-contained Android app (Capacitor 8, Android 16 / API 36). The web files live in www/, copied from the web build by deploy-app.sh.",
   "dependencies": {
-    "@capacitor-community/keep-awake": "^7.0.0",
-    "@capacitor/android": "^7.0.0",
-    "@capacitor/app": "^7.0.0",
-    "@capacitor/app-launcher": "^7.0.0",
-    "@capacitor/core": "^7.0.0",
-    "@capacitor/filesystem": "^7.0.0",
-    "@capacitor/share": "^7.0.0"
+    "@capacitor-community/keep-awake": "^8.0.1",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/share": "^8.0.3",
+    "@capgo/native-purchases": "^8.9.6"
   },
   "devDependencies": {
-    "@capacitor/cli": "^7.0.0"
+    "@capacitor/cli": "^8.5.3"
   }
 }

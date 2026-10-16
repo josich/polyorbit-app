@@ -11,8 +11,8 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 /* The status bar and the navigation bar (back / home / apps) follow the app's skin: native.js calls
-   Capacitor.Plugins.SystemBars.set({color:"#0D1318", light:false}) with the page's own ground colour. */
-@CapacitorPlugin(name = "SystemBars")
+   Capacitor.Plugins.PolyBars.set({color:"#0D1318", light:false}) with the page's own ground colour. */
+@CapacitorPlugin(name = "PolyBars")   /* v555: Capacitor 8 has its own core plugin named SystemBars */
 public class SystemBarsPlugin extends Plugin {
     @PluginMethod
     @SuppressWarnings("deprecation")

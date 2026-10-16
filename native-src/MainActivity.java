@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 
+import androidx.activity.EdgeToEdge;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -15,6 +16,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(SystemBarsPlugin.class);   /* the app's own plugin: the system bars follow the skin */
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);   /* v555: Capacitor 8 / Android 15+: the page gets its safe areas (camera cutout) as insets */
         hideBars(this);
     }
 

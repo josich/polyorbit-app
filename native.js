@@ -139,8 +139,9 @@
     try{ Promise.resolve(P.App.getLaunchUrl()).then(function(r){ openLink(r && r.url); }).catch(function(){}); } catch(e){}
   }
 
-  /* ---- the system bars follow the skin (the app's own SystemBars plugin, native-src/) ---- */
-  if(P.SystemBars){
+  /* ---- the system bars follow the skin (the app's own PolyBars plugin, native-src/; v555: renamed from SystemBars,
+     which is Capacitor 8's own core plugin) ---- */
+  if(P.PolyBars){
     var barsWas = "";
     var barsPaint = function(){
       var root = document.documentElement, g = "";
@@ -149,15 +150,50 @@
       var light = root.getAttribute("data-skin") === "light", key = g + light;
       if(key === barsWas) return;
       barsWas = key;
-      Promise.resolve(P.SystemBars.set({color:g, light:light})).catch(function(){ barsWas = ""; });
+      Promise.resolve(P.PolyBars.set({color:g, light:light})).catch(function(){ barsWas = ""; });
     };
     try{ new MutationObserver(barsPaint).observe(document.documentElement, {attributes:true, attributeFilter:["data-skin"]}); } catch(e){}
     if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", barsPaint); else barsPaint();
   }
 
+  /* ---- v555: Play Billing (the Play build only: window.POLY_STORE = "play") ----
+     window.POLY_BILL for the app's own code, over the NativePurchases plugin (@capgo/native-purchases, no server):
+     buy(id, consumable) -> "ok" | "pending" | "owned" | "cancel"; owned() -> the product ids this Google account owns;
+     prices(ids) -> {id: "4,99 €"} in the player's own currency. */
+  if(P.NativePurchases && window.POLY_STORE === "play"){
+    var NP = P.NativePurchases;
+    var done = function(t){ var s = t && String(t.purchaseState); return s === "1" || s === "PURCHASED"; };
+    var pend = function(t){ var s = t && String(t.purchaseState); return s === "0" || s === "PENDING"; };
+    var ready = function(){
+      return Promise.resolve(NP.isBillingSupported()).then(function(r){ if(!(r && r.isBillingSupported)) throw new Error("billing not supported"); });
+    };
+    window.POLY_BILL = {
+      buy: function(id, consumable){
+        return ready().then(function(){
+          return NP.purchaseProduct({productIdentifier:id, productType:"inapp", quantity:1, isConsumable:!!consumable});
+        }).then(function(t){ return pend(t) ? "pending" : "ok"; }, function(e){
+          var m = String((e && (e.message || e.code || e.errorMessage)) || e || "");
+          if(/cancel/i.test(m)) return "cancel";
+          if(/already.?owned|ITEM_ALREADY_OWNED/i.test(m)) return "owned";
+          throw e;
+        });
+      },
+      owned: function(){
+        return ready().then(function(){ return Promise.resolve(NP.restorePurchases()).catch(function(){}); })
+          .then(function(){ return NP.getPurchases({productType:"inapp"}); })
+          .then(function(r){ return ((r && r.purchases) || []).filter(done).map(function(t){ return t.productIdentifier; }); });
+      },
+      prices: function(ids){
+        return ready().then(function(){ return NP.getProducts({productIdentifiers:ids, productType:"inapp"}); }).then(function(r){
+          var o = {}; ((r && r.products) || []).forEach(function(p){ if(p && p.identifier && p.priceString) o[p.identifier] = p.priceString; }); return o;
+        });
+      }
+    };
+  }
+
   /* ---- a newer build on GitHub: a small card offers it (an APK installed by download never updates by itself;
      the Play Store version will, and then this goes) ---- */
-  if(P.App && P.AppLauncher){
+  if(P.App && P.AppLauncher && window.POLY_STORE !== "play"){   /* v555: never in the Play build - an app from Play updates only through Play */
     var APK = "https://github.com/josich/polyorbit-app/releases/latest/download/polyorbit.apk";
     var CHECK_KEY = "polyorbit-native:upd-check", SKIP_KEY = "polyorbit-native:upd-skip", EVERY = 6 * 3600e3;
     var updCard = null, updWait = 0;

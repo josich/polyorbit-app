@@ -13,6 +13,7 @@ def perm(line):
         s = s.replace('</manifest>', '    ' + line + '\n</manifest>', 1)
 
 perm('<uses-permission android:name="android.permission.VIBRATE" />')
+perm('<uses-permission android:name="com.android.vending.BILLING" />')   # v555: Play Billing (the Play flavour uses it)
 perm('<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />')
 perm('<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />')
 

@@ -28,6 +28,7 @@ public class SystemBarsPlugin extends Plugin {
                     w.setStatusBarColor(c);
                     w.setNavigationBarColor(c);
                     View d = w.getDecorView();
+                    d.setBackgroundColor(c);   /* v556: the strip behind the camera cutout (Android 15+) follows the skin */
                     int f = d.getSystemUiVisibility();
                     if (Build.VERSION.SDK_INT >= 23) {
                         f = light ? (f | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) : (f & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);

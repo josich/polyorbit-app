@@ -12,12 +12,16 @@ ITEMS = (
     '        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>\n'
     '        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>\n'
 )
+# v556: the app's own window background is the ground too (Android 15+ shows it in the strip behind the camera cutout);
+# the launch theme keeps its own, which is the splash.
+BG = '        <item name="android:windowBackground">' + GROUND + '</item>\n'
 n = 0
 for name in ('AppTheme.NoActionBar', 'AppTheme.NoActionBarLaunch'):
     m = re.search(r'(<style name="' + re.escape(name) + r'"[^>]*>)(.*?)(\s*</style>)', s, re.S)
     if not m or 'navigationBarColor' in m.group(2):
         continue
-    s = s[:m.end(2)] + '\n' + ITEMS.rstrip('\n') + s[m.end(2):]
+    items = ITEMS + (BG if name == 'AppTheme.NoActionBar' and 'windowBackground' not in m.group(2) else '')
+    s = s[:m.end(2)] + '\n' + items.rstrip('\n') + s[m.end(2):]
     n += 1
 assert n >= 1, 'no app theme found in styles.xml'
 open(p, 'w', encoding='utf8').write(s)

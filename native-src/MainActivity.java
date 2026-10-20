@@ -17,6 +17,9 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(SystemBarsPlugin.class);   /* the app's own plugin: the system bars follow the skin */
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);   /* v555: Capacitor 8 / Android 15+: the page gets its safe areas (camera cutout) as insets */
+        /* v556: Android 15+ ignores the status bar colour, so the strip behind the camera cutout shows the window's own
+           background - Android's white. It is the app's ground, and PolyBars.set keeps it in step with the skin. */
+        try { getWindow().getDecorView().setBackgroundColor(0xFF0D1318); } catch (Exception e) {}
         hideBars(this);
     }
 

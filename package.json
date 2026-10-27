@@ -1,5 +1,6 @@
 {
   "name": "polyorbit-app",
+  "author": "Josich",
   "private": true,
   "version": "0.2.0",
   "description": "Polyorbit as a self-contained Android app (Capacitor 8, Android 16 / API 36). The web files live in www/, copied from the web build by deploy-app.sh.",

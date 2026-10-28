@@ -191,6 +191,12 @@
     };
   }
 
+  /* ---- v600: Google's own rating sheet (the Play build only), over the InAppReview plugin (@capacitor-community/in-app-review).
+     window.POLY_REVIEW() resolves once Google has handled the request - Google never says whether the sheet showed (it has a quota). */
+  if(P.InAppReview && window.POLY_STORE === "play"){
+    window.POLY_REVIEW = function(){ return Promise.resolve(P.InAppReview.requestReview()); };
+  }
+
   /* ---- a newer build on GitHub: a small card offers it (an APK installed by download never updates by itself;
      the Play Store version will, and then this goes) ---- */
   if(P.App && P.AppLauncher && window.POLY_STORE !== "play"){   /* v555: never in the Play build - an app from Play updates only through Play */

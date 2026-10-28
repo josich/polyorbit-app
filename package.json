@@ -5,6 +5,7 @@
   "version": "0.2.0",
   "description": "Polyorbit as a self-contained Android app (Capacitor 8, Android 16 / API 36). The web files live in www/, copied from the web build by deploy-app.sh.",
   "dependencies": {
+    "@capacitor-community/in-app-review": "^8.0.0",
     "@capacitor-community/keep-awake": "^8.0.1",
     "@capacitor/android": "^8.5.3",
     "@capacitor/app": "^8.1.2",
